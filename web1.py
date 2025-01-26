@@ -7,7 +7,7 @@ import numpy as np
 from pathlib import Path
 import hashlib
 import time
-import math
+import base64
 
 # Password hashing function
 def hash_password(password):
@@ -247,16 +247,14 @@ def main():
         login_page()
     elif st.session_state.page == "Home":
         app_pages()
-
-def landing_page():
-    # st.title("Welcome to the Application")
-    st.set_page_config(
+st.set_page_config(
         page_title="Mental Health Support",  # Title of the page
         page_icon="🧠",  # Icon for the page
         layout="centered",  # Center the content on the page
         initial_sidebar_state="collapsed"
     )
-
+def landing_page():
+   
     st.markdown("""
         <style>
         .title {
@@ -278,13 +276,8 @@ def landing_page():
         
         </style>
     """, unsafe_allow_html=True)
-
-
     st.markdown('<h1 class="title">Mental Health Matters</h1>', unsafe_allow_html=True)
-
-
     st.markdown('<p class="subheader">Taking care of your mental health is just as important as physical health.</p>', unsafe_allow_html=True)
-
     st.markdown("""
         <div class="section">
         <p style="font-size: 1.2em; text-align: center; color: #aaa;">
@@ -292,6 +285,59 @@ def landing_page():
         </p>
         </div>
     """, unsafe_allow_html=True)
+    
+    def load_quotes(filename="quotes.txt"):
+        with open(filename, "r", encoding="utf-8") as file:
+            quotes = file.readlines()
+        return [quote.strip() for quote in quotes]
+
+    # Add custom CSS for styling
+    st.markdown(
+        """
+        <style>
+        .quote-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+        }
+
+        .quote-box {
+            position: relative;
+            background-color: #c9b8d8; 
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            font-family: 'Georgia', serif;
+            color: #000;
+            font-size: 1.5em;
+            text-align: center;
+            line-height: 1.8;
+            margin:0.5em;
+        }
+        
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # Load the quotes
+    quotes = load_quotes()
+
+    # Display a random quote
+    random_quote = random.choice(quotes)
+    quote_text, author = random_quote.split("-", 1) if "-" in random_quote else (random_quote, "Unknown")
+
+    st.markdown('<div class="quote-container">', unsafe_allow_html=True)
+    st.markdown(
+        f"""
+        <div class="quote-box">
+            {quote_text.strip()}<br><br>
+            <em>— {author.strip()}</em>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
     col1, col2 = st.columns(2)
 
     with col1:
@@ -384,6 +430,79 @@ def app_pages():
             Common_for_all_depression_test()
     
     with tabs[4]:
+        # def initialize_timer(minutes):
+        #     st.session_state['remaining_time'] = minutes * 60
+        #     st.session_state['is_running'] = True
+
+        # def countdown_timer(timer_placeholder):
+        #     while st.session_state['remaining_time'] > 0 and st.session_state['is_running']:
+        #         mins_left, secs_left = divmod(st.session_state['remaining_time'], 60)
+        #         timer_placeholder.markdown(f"<h1 style='font-size: 100px; text-align: center;'> 🧘🏻 {mins_left:02}:{secs_left:02} 🧘🏻</h1>", unsafe_allow_html=True)
+        #         time.sleep(1)
+        #         st.session_state['remaining_time'] -= 1
+        #         if st.session_state['remaining_time'] <= 0:
+        #             st.session_state['is_running'] = False
+        #             timer_placeholder.markdown(f"<h1 style='font-size: 60px; text-align: center;'>You did a Great Job! 🥳", unsafe_allow_html=True)
+        #             st.session_state['is_audio_playing'] = False  
+
+        # def encode_audio_to_base64(audio_file_path):
+        #     with open(audio_file_path, "rb") as audio_file:
+        #         encoded_audio = base64.b64encode(audio_file.read()).decode("utf-8")
+        #     return encoded_audio
+
+        # st.markdown(
+        #     """
+        #     <div style="text-align: center; font-size: 40px; color:rgb(2, 135, 252); font-weight: bold">
+        #     🧘🏻 Meditation Timer 🧘🏻
+        #     </div>
+        #     """, unsafe_allow_html=True)
+
+        # minutes = st.number_input("Enter the number of minutes for your meditation session:", min_value=1, max_value=120, value=5)
+
+        # if 'remaining_time' not in st.session_state:
+        #     st.session_state['remaining_time'] = 0
+        #     st.session_state['is_running'] = False
+        #     st.session_state['is_audio_playing'] = False  # Track audio state
+
+        # timer_placeholder = st.empty()
+        # btn1, btn2 = st.columns(2)
+
+        # with btn1:
+        #     if st.button("Start Meditation Timer") and not st.session_state['is_running']:
+        #         st.session_state['is_running'] = True
+                
+        #         # Play audio only when the timer starts and if audio isn't playing
+        #         if not st.session_state['is_audio_playing']:
+        #             audio_folder = "audio"
+        #             selected = os.path.join(audio_folder, "audio_1.mp3")
+        #             html_string = f"""
+        #             <audio id="meditation_audio" autoplay loop>
+        #                 <source src="data:audio/mp3;base64,{encode_audio_to_base64(selected)}" type="audio/mp3">
+        #             </audio>
+        #             """
+        #             st.markdown(html_string, unsafe_allow_html=True)
+        #             st.session_state['is_audio_playing'] = True
+                
+        #         initialize_timer(minutes)
+        #         countdown_timer(timer_placeholder)
+        #         st.balloons()
+
+        # with btn2:
+        #     if st.button("Reset Timer") and st.session_state['is_running']:
+        #         st.session_state['is_running'] = False
+        #         st.session_state['remaining_time'] = 0
+        #         timer_placeholder.markdown(f"<h1 style='font-size: 70px; text-align: center;'>Timer Reset⏳", unsafe_allow_html=True)
+                
+        #         # Stop the audio when timer is reset
+        #         if st.session_state['is_audio_playing']:
+        #             st.session_state['is_audio_playing'] = False
+        #             st.markdown("""
+        #             <script>
+        #                 var audio = document.getElementById("meditation_audio");
+        #                 audio.pause();
+        #                 audio.currentTime = 0;  // Reset audio
+        #             </script>
+        #             """, unsafe_allow_html=True)
         def initialize_timer(minutes):
             st.session_state['remaining_time'] = minutes * 60
             st.session_state['is_running'] = True
@@ -525,7 +644,8 @@ def app_pages():
 
         if st.button("Start Exercise", key="start_exercise", use_container_width=True):
             start_breathing_cycle()
-            
+     
+                        
     with tabs[6]:
         st.header("Logout")
         if st.button("Logout"):
